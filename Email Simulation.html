@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>Email simulation</title>
+	 <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
+                <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+                <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+                <style>
+                        * {
+                                font-family: Verdana;
+                        }
+                        h1 {
+                                margin-top: 0px !important;
+                        }
+                        input {
+                                display: block;
+                                margin-bottom: 10px;
+                        }
+ 
+                        #content1 {
+                                width: 100%;
+                                height: auto;
+                                min-height: 100px;
+                                display: block;
+                                margin-bottom: 10px;
+                                background: #A9F5BC;
+                        }
+ 
+                        .container {
+                                width: 400px;
+                                height: 400px;
+                                padding: 20px;
+                                /*overflow: scroll;*/
+                        }
+ 
+                        .navbar, .buttons {
+                                width: 400px;
+                                padding: 20px;
+                                background: #A9D0F5;
+                        }
+                        .buttons {
+                                text-align: center;
+                        }
+ 
+                        .buttons button {
+                                width: 180px !important;
+                        }
+                        #sent_items {
+                                height: 100%;
+                                /*overflow: scroll;*/
+ 
+                        }
+                        .nav {
+                                /*position: relative;*/
+                                vertical-align: top;
+                                width: auto;
+                                height: 40px;
+                                padding: 8px;
+                                font-size: 22px;
+                                color: white;
+                                text-align: center;
+                                margin-right: 10px !important;
+                                background: #0174DF;
+                                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+                                border: 0;
+                                border-bottom: 2px solid #e2b607;
+                                -webkit-box-shadow: inset 0 -2px #e2b607;
+                                box-shadow: inset 0 -2px #e2b607;
+                        }
+ 
+                        .button {
+                                position: relative;
+                                vertical-align: top;
+                                width: auto;
+                                height: 40px;
+                                padding: 8px;
+                                font-size: 22px;
+                                color: white;
+                                text-align: center;
+                                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+                                background: #f1c40f;
+                                border: 0;
+                                border-bottom: 2px solid #e2b607;
+                                cursor: pointer;
+                                -webkit-box-shadow: inset 0 -2px #e2b607;
+                                box-shadow: inset 0 -2px #e2b607;
+                        }
+                        #send {
+                                background: #64CB42;
+                                border-bottom: 2px solid #045FB4;
+                                -webkit-box-shadow: inset 0 -2px #45862F;
+                                box-shadow: inset 0 -2px #45862F;
+                        }
+ 
+                        .dialog {
+                                padding: 5px !important;
+                                min-width: 330px !important;
+                                display: none;
+                        }
+                        #content {
+                                min-height: 100px;
+                                width: 290px !important;
+                                max-width: 290px !important;
+                                margin: 5px;
+                        }
+ 
+                        #error, #error2 {
+                                color: red;
+                                display: none;
+                                margin-bottom: 5px !important;
+                        }
+ 
+                        #sent, #email, #done {
+ 
+                                border-bottom: 2px solid #045FB4;
+                                -webkit-box-shadow: inset 0 -2px #045FB4;
+                                box-shadow: inset 0 -2px #045FB4;
+                                margin-right: 10px;
+                        }
+                        #done_end {
+                                text-align: center;
+                                vertical-align: middle;
+                        }
+ 
+                        .passed {
+                                background: #BDBDBD;
+                        }
+ 
+                        .active {
+                                background: #FF8000;
+                        }
+ 
+                        .pending {
+                                background: #81DAF5;
+                        }
+                        .password_prompt, .buttons, .navbar, #sent_items, #done_end {
+                                display: none;
+                        }
+ 
+                        #feedback {
+                                font-size: 1.4em;
+                        }
+                        #selectable .ui-selecting {
+                                background: #FECA40;
+                        }
+                        #selectable .ui-selected {
+                                background: #F39814;
+                                color: white;
+                        }
+                        #selectable {
+                                list-style-type: none;
+                                margin: 0;
+                                padding: 0;
+                                min-width: 200px !important;
+                                overflow: scroll;
+                        }
+                        #selectable li {
+                                margin: 3px;
+                                padding: 0.4em;
+                                font-size: 1.4em;
+                                height: auto;
+                                min-width: 200px !important;
+                        }
+ 
+                </style>
+                <script>
+                        $(function() {
+                                var password;
+                                function proveri() {
+                                        var valid = false, flag = false;
+                                        var pass = $("#ins_pass").val();
+                                        var pass1 = $("#rep_pass").val();
+                                        password = pass;
+                                        pass.toString();
+                                        for ( i = 0; i < pass.length; i++) {
+                                                if (pass[i] == '!' || pass[i] == '@' || pass[i] == '#' || pass[i] == '$' || pass[i] == '%' || pass[i] == '^' || pass[i] == '*')
+                                                        flag = true;
+                                        }
+                                        if (pass.length >= 6 && flag == true && pass === pass1)
+                                                {valid = true;}
+                                                else
+                                                {
+                                                        $('#ins_pass').val("");
+                                                $('#rep_pass').val("");
+                                                }
+ 
+                                        return valid;
+                                }
+ 
+ 
+                                $(".password_insert").dialog({
+                                        autoOpen : true,
+                                        modal : true,
+                                            open: function (event, ui) { $(this).closest('.ui-dialog').find('.ui-dialog-titlebar-close').hide(); },
+                                        buttons : {
+                                                ok : function() {
+                                                        if (proveri()) {
+                                                               
+                                                                $(".password_insert").dialog("close");
+                                                        } else {
+                                                                $("#error").show();
+                                                        }
+                                                }
+                                        }
+ 
+                                });
+                                function prikazi()
+                                {
+                                        to = document.getElementById("to").value;
+                                        document.getElementById("to_transfer").innerHTML = to;
+                                        subject = document.getElementById("subject").value;
+                                        document.getElementById("subject_transfer").innerHTML = subject;
+                                        cc = document.getElementById("cc").value;
+                                        document.getElementById("cc_transfer").innerHTML = cc;
+                                }
+                                $("#insert2").click(function() {
+                                        prikazi();
+                                        $(".dialog").dialog({
+                                                autoOpen : true,
+                                                modal : true,
+                                                open: function (event, ui) { $(this).closest('.ui-dialog').find('.ui-dialog-titlebar-close').hide(); }
+                                        });
+                                });
+                                $("#insert").click(function(){
+                                        content = document.getElementById("content").value;
+                                        document.getElementById("content1").innerHTML=content;
+                                        $(".dialog").dialog("close");
+                                       
+                                });
+                                $("#clear").click(function(){
+                                        $("#content1").val("");
+                                       
+                                });
+                                $("#send").click(function(){
+                                        $(".password_prompt").dialog({
+                                                autoOpen : true,
+                                                modal : true,
+                                                    open: function (event, ui) { $(this).closest('.ui-dialog').find('.ui-dialog-titlebar-close').hide(); },
+                                                buttons:{
+                                                        ok:function(){
+                                                                pas=$("#pass").val();
+                                                                if (pas===password)
+                                                                {
+                                                                        $(".password_prompt").dialog("close");
+                                                                }
+                                                                else {
+                                                                        $("#error2").show();
+                                                                }
+                                                        }
+                                                }
+                                        });
+                                });
+                       
+                        });
+                </script>
+ 
+        </head>
+ 
+        <body>
+ 
+                <div class="navbar">
+                        <span class="nav active" id="email">Email</span>
+                        <span class="nav" id="sent">Sent</span>
+                        <span class="nav" id="done">Done</span>
+                </div>
+                <div class="container">
+ 
+                        <div class="wizard_tab" id="compose_message">
+ 
+                                <h1><b>New message:</b></h1>
+                                <span>To:</span>
+                                <input type="text" name="to" id="to"/>
+                                <span>Cc:</span>
+                                <input type="text" name="cc" id="cc"/>
+                                <span>Subject:</span>
+                                <input type="text" name="subject" id="subject"/>
+                                <span>Content:</span><span id="content1"> </span>
+                                <button class="button" id="insert2">
+                                        Insert
+                                </button>
+                                <button class="button" id="send" >
+                                        Send
+                                </button>
+ 
+                                <div class="dialog" title="Message Content">
+                                        To: <span id="to_transfer"> </span></br>
+                                        Subject: <span id="subject_transfer"> </span></br>
+                                        Cc: <span id="cc_transfer"> </span></br></br>
+                                        <span>Content:</span> </br>                                    
+                                        <textarea cols="25" rows="7" type="text" id="content" ></textarea></br>
+                                        <button  id="insert">
+                                        Insert
+                                        </button>
+                                        <button id="clear">
+                                                Clear
+                                        </button>
+                                </div>
+ 
+                                <div class="password_prompt" title="Password">
+                                        <span id="error2"><b>Password error!</b> </span> <br/>
+                                        <span>Password: </span></br>
+                                        <input type="password" id="pass"/>
+                                </div>
+ 
+                                <div class="password_insert" title="Set your password">
+                                        <span id="error"><b>Passwords error!</b></span>
+                                        <br/>
+                                        <span>New Password: </span></br>
+                                        <input type="password" id="ins_pass"/>
+                                        <span>Repeat Password: </span></br>
+                                        <input type="password" id="rep_pass"/>
+                                </div>
+ 
+                        </div>
+ 
+                        <div class="wizard_tab" id="sent_items">
+ 
+                                <h1><b>Sent Items:</b></h1>
+                                <ol id="selectable">
+ 
+                                        <li class="ui-widget-content">
+                                                <span>To: somebody@whocares.com </span>
+                                                <div>
+                                                        <span>Subject: </span>
+                                                </div>
+                                        </li>
+                                </ol>
+ 
+                                <button class="button" id="delete">
+                                        Delete
+                                </button>
+                        </div>
+ 
+                        <div class="wizard_tab" id="done_end">
+                                <h1>DONE</h1>
+                        </div>
+                </div>
+ 
+                <div class="buttons">
+                        <button class="button" id="previos">
+                                Previous
+                        </button>
+                        <button class="button" id="next">
+                                Next
+                        </button>
+                </div>
+ 
+        </body>
+ 
+</html>
